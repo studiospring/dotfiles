@@ -1,0 +1,2 @@
+gem: --document ri
+gem: --user-install

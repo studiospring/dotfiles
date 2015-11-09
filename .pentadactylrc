@@ -1,0 +1,11 @@
+set guioptions=srnT
+
+nmap <Right> <C-d>
+nmap <Left> <C-u>
+nmap <S-j> <C-u>
+nmap <S-k> <C-d>
+nmap j gt
+nmap k gT
+
+map <C-b> <F4>
+set defsearch=au

@@ -1,0 +1,46 @@
+[core]
+	pager = less -+S
+[alias]
+	a = add
+	aa = add -A
+	b = branch
+  d = diff
+	c = commit -m
+	ca = commit -am
+  s = status
+  ss = stash save
+  l = log --graph --pretty=format:'%C(red)%h %C(yellow)%aN%Creset%C(cyan)%d%Creset %s %Cgreen(%cr)%Creset %Creset' --all
+  # list committed filenames only, eg, git sf HEAD
+  sf = show --pretty="format:" --name-status
+  # show log from HEAD (useful for old commits)
+  lh = log --graph --pretty=format:'%C(red)%h %C(yellow)%aN%Creset%C(cyan)%d%Creset %s %Cgreen(%cr)%Creset %Creset'
+  lsa = log --graph --pretty=format:'%C(red)%h %C(yellow)%aN%Creset%C(cyan)%d%Creset %s %Cgreen(%cr)%Creset %Creset' --all
+  committers = log --pretty=format:"%an" | sort -u
+[diff]
+  ;external = git_diff_wrapper
+#show git log in terminal, not in less
+[pager]
+  diff = less
+
+[difftool]
+	prompt = false
+
+# prevent reapplication of patch when rebasing
+[rerere]
+  enabled=true
+[mailmap]
+	file = ~/.mailmap
+
+[user]
+	name = Sean
+	email = lettersforsean@yahoo.co.jp
+[color]
+	ui = auto
+[merge]
+	ff = only
+	stat = true
+[diff]
+	renames = copies
+	mnemonicprefix = true
+[push]
+	default = simple

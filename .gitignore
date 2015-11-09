@@ -1,0 +1,7 @@
+.nvim/*
+.vim/*
+ssh_config
+gpg.conf
+.xchat2/*
+install*
+dotbot/*

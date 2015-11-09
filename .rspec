@@ -1,0 +1,12 @@
+/* http://rubydoc.info/github/rspec/rspec-core/RSpec/Core/Configuration */
+--colour
+/* use colour in pagers and files as well */
+--tty
+/*  distributed ruby (speeds up tests) */
+--drb
+/* -- foo success_color */
+/* -- foo failure_color */
+/* -- foo output_stream */
+/* -- fail_fast = true */
+/* -- foo detail_color  */
+/* -- foo default_color */
