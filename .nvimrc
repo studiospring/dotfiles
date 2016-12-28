@@ -1,12 +1,15 @@
 "" "****** BEHAVIOUR *******"
 filetype plugin indent on     
-set spelllang=en_gb
+" Enable spell checker
+autocmd FileType markdown setlocal spell
 set lazyredraw
 set noswapfile
 "" Read file if changed outside of vim
 set autoread
 "" yank also copies to clipboard (Cmd-c)
 set clipboard=unnamed
+"" Fixes clipboard error: target string not available
+let g:yankring_clipboard_monitor=0
 "" 'dd' does not save to yankring
 "" See http://items.sjbach.com/319/configuring-vim-right for an
 "" explanation of the following:
@@ -14,17 +17,16 @@ set hidden
 set wildmode=list:longest,full
 
 "" Open last file(s) if invoked without arguments.
-autocmd VimLeave * nested if (!isdirectory($HOME . "/.nvim")) |
-  \ call mkdir($HOME . "/.nvim") |
+autocmd VimLeave * nested if (!isdirectory($HOME . "/.config/nvim")) |
+  \ call mkdir($HOME . "/.config/nvim") |
   \ endif |
-  \ execute "mksession! " . $HOME . "/.nvim/Session.vim"
-autocmd VimEnter * nested if argc() == 0 && filereadable($HOME . "/.nvim/Session.vim") |
-    \ execute "source " . $HOME . "/.nvim/Session.vim"
+  \ execute "mksession! " . $HOME . "/.config/nvim/Session.vim"
+autocmd VimEnter * nested if argc() == 0 && filereadable($HOME . "/.config/nvim/Session.vim") |
+    \ execute "source " . $HOME . "/.config/nvim/Session.vim"
 
 "" Persistent undo
 set undodir=/tmp/nvim_undodir
 set undofile
-
 
 "" remove trailing whitespace before saving
 autocmd BufWritePre *.{rb,yml,slim,js,coffeescript,css} :%s/\s\+$//e
@@ -33,9 +35,9 @@ let g:python_host_program = '/usr/bin/python3'
 "" "****** PLUGINS *******"
 "" Update Vimplug: PlugUpgrade
 "" Update plugins: PlugUpdate
-"" Do not forget there are also rc settings in ~/.nvim/ftplugin.
+"" Do not forget there are also rc settings in ~/.config/nvim/ftplugin.
 "" required! 
-call plug#begin('~/.nvim/autoload/plugged')
+call plug#begin('~/.config/nvim/autoload/plugged')
 "" Note taking plugin
 "" Broken
 " Plug 'xolox/vim-misc' | Plug 'xolox/vim-notes'
@@ -98,6 +100,7 @@ Plug 'tpope/vim-fugitive'
 Plug 'bling/vim-bufferline'
 Plug 'flazz/vim-colorschemes'
 "Plug 'Lokaltog/vim-easymotion'
+Plug 'Konfekt/FastFold'
 "" Fuzzy finder
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': 'yes \| ./install' }
 " Search current dir recursively
@@ -111,13 +114,14 @@ let g:indentLine_char = '┊'
 " set list lcs=tab:\|\
 Plug 'jwhitley/vim-matchit'
 "" Tab completion
+Plug 'justinmk/vim-sneak'
 Plug 'ervandew/supertab'
 " Does not work yet! (09/15)
 " Does not work with Neovim without python extension (as at 09/15) :-(
-" Plug 'Shougo/deoplete.nvim'
+" Plug 'Shougo/deoplete.config/nvim'
 " let g:deoplete#enable_at_startup = 1
 " Plug 'Shougo/neosnippet-snippets'
-" let g:neosnippet#snippets_directory = '/home/sean/.config/dotfiles/.nvim/autoload/plugged/neosnippet-snippets/neosnippets/vim/*.snip'
+" let g:neosnippet#snippets_directory = '/home/sean/.config/nvim/autoload/plugged/neosnippet-snippets/neosnippets/vim/*.snip'
 " Plug 'Shougo/context_filetype.vim'
 " Plugin key-mappings.
 " imap <C-i>     <Plug>(neosnippet_expand_or_jump)
@@ -160,16 +164,21 @@ highlight SyntasticErrorLine guibg=#5f5f5f
 Plug 'vim-scripts/YankRing.vim' 
 nnoremap <leader>y :YRShow<cr>
 "" Persist state between sessions
-Plug 'kopischke/vim-stay'
-set viewoptions=cursor,slash,unix
-" set viewoptions=cursor,folds,slash,unix
+" Plug 'kopischke/vim-stay'
+" set viewoptions=cursor,slash,unix
+set viewoptions=cursor,folds,slash,unix
 " Numbers search match
 " Breaks search (30/9)
 " Plug 'henrik/vim-indexed-search'
 " Coffeescript syntax highlighting, among other things.
 Plug 'kchmck/vim-coffee-script'
 Plug 'slim-template/vim-slim'
-Plug '~/dev/vim-origami'
+Plug 'othree/html5.vim'
+" Plug '~/dev/vim-origami'
+" nnoremap <leader>f :OrigamiIncreaseFoldlevel<CR>
+" nnoremap <leader><S-f> :OrigamiDecreaseFoldlevel<CR>
+" Plugin testing framework
+Plug 'junegunn/vader.vim'
 "" All plugins must be added before this line
 "" required by VimPlug
 call plug#end()
@@ -180,6 +189,7 @@ color Tomorrow-Night
 set linebreak
 set ruler
 set relativenumber
+set number
 " highlight current line without underline
 hi CursorLine term=NONE cterm=NONE ctermbg=Black
 " Set colour of linenumbers
@@ -199,6 +209,7 @@ set expandtab
 set formatoptions=qrn1 
 " Syntax highlighting for files that are not recognised by default.
 au BufRead,BufNewFile Guardfile setfiletype rb
+au BufNewFile,BufRead *.slim set ft=slim
 "" "allow indent of selected lines regardless of how they are selected
 "" set selectmode=
 "" " Convenient command to see the difference between the current buffer and the
@@ -259,7 +270,6 @@ fu! CustomFoldText()
 endf
 set foldtext=CustomFoldText()
 
-set foldmethod=syntax
 " set foldlevelstart=1
 "" Let me fold top level without folding nested folds
 " set foldnestmax=2
@@ -268,6 +278,10 @@ set foldmethod=syntax
 "let sh_fold_enabled=1         " sh
 "let vimsyn_folding='af'       " Vim script
 "let xml_syntax_folding=1      " XML
+augroup RememberFolds
+  au BufWrite,VimLeave *.* mkview
+  au BufRead           *.* silent loadview
+augroup END
 "" "****** SEARCH ******"
 "" Incremental searching
 set incsearch
@@ -320,6 +334,7 @@ vnoremap > >gv
 map <space> <leader>
 "" Remap save
 nnoremap <leader>s :w<cr>
+nnoremap <leader><shift>s :w!<cr>
 "" Scroll page down
 nnoremap <leader>j <C-f>
 "" Scroll page up
@@ -338,6 +353,7 @@ map <C-j> 10j
 map <leader>d :bd <CR>
 map <leader>b :bn <CR>
 map <leader>B :bN <CR>
+nnoremap <C-TAB> :bn <CR>
 "" Resize split windows. Useful when using vimdiff
 nnoremap <silent> <leader>> :vertical resize 50
 nnoremap <silent> <leader>< :vertical resize -50
@@ -354,6 +370,8 @@ nnoremap Y y$
 nnoremap yl ^y$
 "" Cut whole line from anywhere on the line without line break
 map dl ^d$
+" Paste to X11 clipboard.
+" nnoremap yy "+yy
 " Use fzf to switch buffer.
 function! s:buflist()
   redir => ls
@@ -379,4 +397,4 @@ nnoremap <silent> <Leader>b :call fzf#run({
 "" "****** COMMAND MODE ******"
 cabbrev h tab help
 " write to a readonly file
-command Sudow w !sudo tee % >/dev/null
+silent command Sudow w !sudo tee % >/dev/null
