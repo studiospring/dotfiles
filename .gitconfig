@@ -18,7 +18,9 @@
   committers = log --pretty=format:"%an" | sort -u
 [diff]
   ;external = git_diff_wrapper
-#show git log in terminal, not in less
+  ; show git log in terminal, not in less
+  ; Hunk alignment makes diffs easier to read.
+  ; diff.compactionHeuristic
 [pager]
   diff = less
 
