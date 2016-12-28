@@ -6,6 +6,9 @@ nmap <S-j> <C-u>
 nmap <S-k> <C-d>
 nmap j gt
 nmap k gT
+" Open new tab
+nmap <C-t> :tabnew<cr>
 
 map <C-b> <F4>
-set defsearch=au
+" No search engine suggestions
+" set defsearch=au
